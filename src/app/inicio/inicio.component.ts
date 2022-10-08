@@ -10,7 +10,7 @@ export class InicioComponent implements OnInit {
 
   videoUrl:string;
   constructor(private router:Router) { 
-    this.videoUrl = "assets/videos/1.mp4"
+    this.videoUrl = "https://res.cloudinary.com/dfyevp7g4/video/upload/v1665238886/blackjack/video/menuVideo.mp4"
   }
 
   ngOnInit(): void {
