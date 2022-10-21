@@ -1,4 +1,7 @@
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { tick } from '@angular/core/testing';
+import { Observable } from 'rxjs';
 import {Carta} from "../Interfaces/Carta";
 
 @Injectable({
@@ -6,7 +9,7 @@ import {Carta} from "../Interfaces/Carta";
 })
 export class CartasService {
 
-  constructor() {
+  constructor(private http:HttpClient) {
     this.generarCartas();
    }
 
@@ -20,7 +23,7 @@ export class CartasService {
   generarCartas(){
     for (let i = 1; i < 4; i++) {
       for (let j = 1; j <= 13; j++) {
-        this.mazo.push(new Carta(j,this.palos[i]));   
+        this.mazo.push(new Carta(Math.random() * 52,j,this.palos[i]));   
       } 
     }
     this.mezclarCartas();
@@ -33,28 +36,16 @@ export class CartasService {
     };
   }
 
-  pedirCarta():Carta{
-    const cartaJugador = this.mazo[Math.floor(Math.random()*this.mazo.length)]
-    return cartaJugador;
+  pedirCarta():Observable<any>{
+    return this.http.get("https://localhost:5001/api/Partida/pedirCarta");
   }
 
-  iniciarJugador():Carta[]{
+  iniciarJugador():Observable<any>{
+    return this.http.get("https://localhost:5001/api/Partida/iniciarJugador");
+  } 
 
-    for (let i = 0; i < 2; i++) {
-      const cartaJugador = this.mazo[Math.floor(Math.random()*this.mazo.length)];
-      this.cartasJugador.push(cartaJugador);
-    } 
-    return this.cartasJugador
-
-  }
-
-  iniciarCrupier():Carta[]{
-
-    for (let i = 0; i < 1; i++) {
-      const cartaCrupier = this.mazo[Math.floor(Math.random()*this.mazo.length)];
-      this.cartasCrupier.push(cartaCrupier);
-    } 
-    return this.cartasCrupier
+  iniciarCrupier():Observable<any>{
+    return this.http.get("https://localhost:5001/api/Partida/iniciarCrupier");
   }
 
   generarCartasCrupier():Carta[]{
@@ -81,22 +72,6 @@ export class CartasService {
     }
     return this.cartasCrupier;  
   } 
-
-  calcularPuntosJugador():number{
-    this.puntosJugador = 0;
-    for (let index = 0; index < this.cartasJugador.length; index++) {
-      if(this.cartasJugador[index].valor >= 10)
-      {
-        this.puntosJugador += 10;  
-      }
-
-      else 
-      {
-      this.puntosJugador += this.cartasJugador[index].valor;
-      }
-    }
-    return this.puntosJugador;
-  }
 
   calcularPuntosCupier():number{
     this.puntosCrupier = 0;
