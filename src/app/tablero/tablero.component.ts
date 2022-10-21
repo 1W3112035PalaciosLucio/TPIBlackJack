@@ -21,7 +21,6 @@ export class TableroComponent implements OnInit {
   }
 
   partidaIniciada = true;
-  resultado: Carta[]  = []
   cartasJugador: Carta[] = [];
   cartasCrupier: Carta[] = [];
   puntosJugador: number = 0;
@@ -34,51 +33,15 @@ export class TableroComponent implements OnInit {
   }
 
   InicioPartida() {
-    this.servicio.iniciarCrupier().subscribe({
-      next: (result) => {this.resultado = result}
-    })
-    setTimeout(()=> {this.cargarCartas(this.resultado)},10);
-    setTimeout(()=> {this.calcularPuntos(false)},10);
-
-
+    this.cartasCrupier = this.servicio.iniciarCrupier();
     this.partidaIniciada = false;
+    this.puntosCrupier = this.servicio.calcularPuntosCupier();
   }
-
-  cargarCartas(cartas:any[]){
-    cartas.forEach(element => {
-      var carta = new Carta(element.id,element.valor,element.palo);
-      this.cartasCrupier.push(carta);
-    });
-  }
-
-  calcularPuntos(flag:boolean){
-
-    if(flag == true){
-    this.puntosCrupier += this.resultado[this.resultado.length-1].valor;
-    }
-    else{
-      this.cartasCrupier.forEach(element => {
-        if(element.valor >= 10){
-          this.puntosCrupier += 10
-        }
-        else if(element.valor == 1 && this.puntosCrupier + 11 <= 21)
-        {
-          this.puntosCrupier += 11;
-        }
-        else{
-        this.puntosCrupier += element.valor
-        }
-      });
-    }
-  }
-
-
-
 
 
   Plantarse() {
     this.cartasCrupier = this.servicio.generarCartasCrupier();
-    
+    this.puntosCrupier = this.servicio.calcularPuntosCupier();
 
     if (this.puntosJugador == 21) {
       this.resultadoJuego = "¡¡¡ 21 PUNTOS, BLACKJACK GANASTE !!!"
@@ -122,7 +85,6 @@ export class TableroComponent implements OnInit {
 
   PedirCarta(cartas: Carta[]) {
     this.cartasJugador = cartas;
-
   }
 }
 
